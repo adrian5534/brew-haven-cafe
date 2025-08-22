@@ -1,0 +1,41 @@
+/* Global styles for Brew Haven Café */
+* {
+  font-family: 'Inter' !important;
+  font-style: normal !important;
+}
+/* Brand colors */
+:root {
+  --background:#f5e6cc;
+  --border:#e6d8c6;
+  --primary:#6b4226;
+  --secondary: #4e6e58;
+  --card: #ffffff;
+  --foreground: #3b2f2f;
+  --input:#fff7ee;
+  --primary-foreground: #f5e6cc;
+  --secondary-foreground: #000000;
+  --muted: #ede2d6;
+  --muted-foreground: #7a6a60;
+  --success: #cde7d4;
+  --success-foreground: #2f4f3d;
+  --accent:#d4bfaa;
+  --accent-foreground: #3b2f2f;
+  --destructive: #b03a2e;
+  --destructive-foreground: #ffffff;
+  --warning: #f4c46b;
+  --warning-foreground: #3b2f2f;
+  --card-foreground: #3b2f2f;
+  --sidebar: #f6eee4;
+  --sidebar-foreground: #3b2f2f;
+  --sidebar-primary: #6b4226;
+  --sidebar-primary-foreground: #f5e6cc;
+}
+
+/* Apply fonts */
+body {
+  font-family: 'Inter', sans-serif !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}

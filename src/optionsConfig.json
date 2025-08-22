@@ -1,0 +1,153 @@
+{
+  "Drink": {
+    "temperature": {
+      "label": "Temperature",
+      "type": "toggle",
+      "options": [
+        { "value": "hot", "label": "Hot" },
+        { "value": "iced", "label": "Iced" }
+      ],
+      "required": true
+    },
+    "size": {
+      "label": "Size",
+      "type": "radio",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium", "price": 0.5 },
+        { "value": "large", "label": "Large", "price": 1.0 }
+      ],
+      "required": true
+    },
+    "milk": {
+      "label": "Milk Type",
+      "type": "dropdown",
+      "options": [
+        { "value": "whole", "label": "Whole" },
+        { "value": "2%", "label": "2%" },
+        { "value": "skim", "label": "Skim" },
+        { "value": "oat", "label": "Oat", "price": 0.5 },
+        { "value": "almond", "label": "Almond", "price": 0.5 },
+        { "value": "soy", "label": "Soy", "price": 0.5 }
+      ]
+    },
+    "sweetness": {
+      "label": "Sweetness",
+      "type": "radio",
+      "options": [
+        { "value": "unsweetened", "label": "Unsweetened" },
+        { "value": "light", "label": "Light" },
+        { "value": "regular", "label": "Regular" },
+        { "value": "extra", "label": "Extra" }
+      ]
+    },
+    "extras": {
+      "label": "Extras",
+      "type": "checkbox",
+      "options": [
+        { "value": "espresso", "label": "Extra espresso shot", "price": 1.0 },
+        { "value": "whipped", "label": "Whipped cream", "price": 0.5 },
+        { "value": "vanilla", "label": "Vanilla syrup", "price": 0.5 },
+        { "value": "caramel", "label": "Caramel syrup", "price": 0.5 },
+        { "value": "hazelnut", "label": "Hazelnut syrup", "price": 0.5 }
+      ]
+    }
+  },
+  "Sandwich": {
+    "size": {
+      "label": "Size",
+      "type": "radio",
+      "options": [
+        { "value": "half", "label": "Half" },
+        { "value": "full", "label": "Full", "price": 2.0 }
+      ],
+      "required": true
+    },
+    "bread": {
+      "label": "Bread",
+      "type": "radio",
+      "options": [
+        { "value": "ciabatta", "label": "Ciabatta" },
+        { "value": "sourdough", "label": "Sourdough" },
+        { "value": "wheat", "label": "Wheat" },
+        { "value": "wrap", "label": "Wrap" }
+      ],
+      "required": true
+    },
+    "cheese": {
+      "label": "Cheese",
+      "type": "radio",
+      "options": [
+        { "value": "cheddar", "label": "Cheddar" },
+        { "value": "swiss", "label": "Swiss" },
+        { "value": "provolone", "label": "Provolone" },
+        { "value": "none", "label": "No cheese" }
+      ]
+    },
+    "toasting": {
+      "label": "Toasting",
+      "type": "toggle",
+      "options": [
+        { "value": "toasted", "label": "Toasted" },
+        { "value": "not_toasted", "label": "Not toasted" }
+      ]
+    },
+    "veggies": {
+      "label": "Veggies",
+      "type": "checkbox",
+      "options": [
+        { "value": "lettuce", "label": "Lettuce" },
+        { "value": "tomato", "label": "Tomato" },
+        { "value": "onion", "label": "Onion" },
+        { "value": "pickles", "label": "Pickles" }
+      ]
+    },
+    "spreads": {
+      "label": "Spreads",
+      "type": "checkbox",
+      "options": [
+        { "value": "mayo", "label": "Mayo" },
+        { "value": "mustard", "label": "Mustard" },
+        { "value": "pesto", "label": "Pesto" },
+        { "value": "chipotle_aioli", "label": "Chipotle Aioli" }
+      ]
+    },
+    "premium_addons": {
+      "label": "Premium Add-ons",
+      "type": "checkbox",
+      "options": [
+        { "value": "avocado", "label": "Avocado", "price": 1.5 },
+        { "value": "bacon", "label": "Bacon", "price": 1.5 },
+        { "value": "extra_meat", "label": "Extra meat", "price": 2.0 }
+      ]
+    }
+  },
+  "Pastry": {
+    "warm": {
+      "label": "Warm it up?",
+      "type": "toggle",
+      "options": [
+        { "value": "yes", "label": "Yes" },
+        { "value": "no", "label": "No" }
+      ]
+    },
+    "filling": {
+      "label": "Filling/Glaze",
+      "type": "dropdown",
+      "options": [
+        { "value": "plain", "label": "Plain" },
+        { "value": "chocolate", "label": "Chocolate" },
+        { "value": "almond", "label": "Almond" }
+      ]
+    },
+    "toppings": {
+      "label": "Toppings",
+      "type": "checkbox",
+      "options": [
+        { "value": "powdered_sugar", "label": "Powdered sugar" },
+        { "value": "chocolate_drizzle", "label": "Chocolate drizzle", "price": 0.5 },
+        { "value": "caramel_drizzle", "label": "Caramel drizzle", "price": 0.5 }
+      ]
+    }
+  }
+}

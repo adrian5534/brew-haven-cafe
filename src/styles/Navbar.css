@@ -1,0 +1,127 @@
+.navbar {
+  background: var(--sidebar) !important;
+  color: var(--primary) !important;
+  border-bottom: 1px solid var(--border);
+  min-height: 100px; /* Increased height for wider navbar background */
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  color: var(--primary) !important;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  background: var(--primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; /* Increased space between nav items for desktop */
+}
+
+.nav-link {
+  color: var(--primary) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link.active,
+.nav-link:focus {
+  background: var(--secondary) !important;
+  color: var(--background) !important;
+}
+
+.nav-link:hover {
+  background: var(--secondary);
+  color: var(--background) !important;
+}
+
+.nav-link.position-relative {
+  color: var(--primary) !important;
+}
+
+.badge {
+  background: var(--primary) !important;
+  color: var(--background) !important;
+  font-weight: 600;
+  font-size: 0.8rem;
+  min-width: 22px;
+  position: static; /* Inline with icon */
+  top: unset;
+  right: unset;
+  margin-left: 4px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Responsive styles */
+@media (max-width: 991.98px) {
+  .navbar {
+    min-height: 64px;
+  }
+  .navbar-nav {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+    width: 100%;
+    background: var(--sidebar);
+    padding: 0.5rem 0;
+    border-radius: 0.5rem;
+  }
+  .nav-link {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    justify-content: flex-start;
+  }
+  .navbar-brand {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .navbar {
+    min-height: 56px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .navbar-brand {
+    font-size: 0.95rem;
+  }
+  .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.5rem;
+  }
+  .badge {
+    font-size: 0.7rem;
+    min-width: 18px;
+    padding: 2px 5px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+  .navbar-brand {
+    font-size: 1.35rem;
+  }
+  .nav-link {
+    font-size: 1.1rem;
+  }
+}

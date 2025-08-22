@@ -1,0 +1,80 @@
+{
+  "Coffee": [
+    {
+      "name": "Classic Cappuccino",
+      "desc": "Double espresso topped with silky steamed milk and velvety foam.",
+      "price": 4.50,
+      "image": "/image/cappuccino.jpg"
+    },
+    {
+      "name": "Iced Vanilla Latte",
+      "desc": "Smooth espresso, vanilla, and cold milk poured over ice.",
+      "price": 5.25,
+      "image": "/image/vanilla-latte.jpg"
+    },
+    {
+      "name": "Matcha Latte",
+      "desc": "Stone-ground matcha whisked with milk for a creamy finish.",
+      "price": 5.00,
+      "image": "/image/matcha.jpg"
+    },
+    {
+      "name": "Mocha Delight",
+      "desc": "Espresso balanced with rich cocoa and steamed milk.",
+      "price": 5.25,
+      "image": "/image/mocha.jpg"
+    }
+  ],
+  "Pastries": [
+    {
+      "name": "Butter Croissant",
+      "desc": "Flaky, buttery layers baked fresh each morning.",
+      "price": 3.50,
+      "image": "/image/croissant.jpg"
+    },
+    {
+      "name": "Blueberry Muffin",
+      "desc": "Studded with blueberries and a hint of lemon zest.",
+      "price": 3.75,
+      "image": "/image/muffin.jpg"
+    },
+    {
+      "name": "Chocolate Chip Cookie",
+      "desc": "Chewy center, crisp edges, and melty dark chocolate chips.",
+      "price": 2.50,
+      "image": "/image/cookie.jpg"
+    },
+    {
+      "name": "Banana Bread",
+      "desc": "House recipe with toasted walnuts and a hint of cinnamon.",
+      "price": 3.25,
+      "image": "/image/banana-bread.jpg"
+    }
+  ],
+  "Sandwiches": [
+    {
+      "name": "Turkey Avocado",
+      "desc": "Roasted turkey, avocado, mixed greens, and aioli on sourdough.",
+      "price": 8.50,
+      "image": "/image/turkey.jpg"
+    },
+    {
+      "name": "Caprese",
+      "desc": "Tomato, fresh mozzarella, basil pesto, and balsamic glaze.",
+      "price": 7.95,
+      "image": "/image/caprese.jpg"
+    },
+    {
+      "name": "Grilled Cheese",
+      "desc": "Melted cheddar and gouda on butter-toasted country bread.",
+      "price": 6.95,
+      "image": "/image/grilled-cheese.jpg"
+    },
+    {
+      "name": "Chicken Pesto Panini",
+      "desc": "Herbed chicken, pesto, provolone, and roasted peppers.",
+      "price": 8.95,
+      "image": "/image/pesto-panini.jpg"
+    }
+  ]
+}

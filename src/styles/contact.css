@@ -1,0 +1,68 @@
+.container,
+.container-fluid {
+  max-width: 1200px;
+}
+
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(80, 60, 40, 0.04);
+}
+
+input.form-control,
+textarea.form-control {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+input.form-control:focus,
+textarea.form-control:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px var(--success);
+}
+
+.btn-outline-secondary {
+  border: 1px solid var(--border);
+  color: var(--secondary);
+  background: var(--input);
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--secondary);
+  color: var(--background);
+}
+
+@media (max-width: 991.98px) {
+  .container,
+  .container-fluid {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .row {
+    flex-direction: column;
+  }
+  .col-lg-8,
+  .col-lg-4 {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .container,
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .card {
+    padding: 1rem !important;
+  }
+  .bg-white.bg-opacity-75 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: 100% !important;
+  }
+}
