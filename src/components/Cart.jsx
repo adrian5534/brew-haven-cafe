@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
 import ItemDetailsModal from './ItemDetailsModal';
 import optionsConfig from '../optionsConfig.json';
+import menuData from '../menu.json';
 
-// Helper to get options config for an item based on its type
+// Map menu categories to option config keys
+const categoryMap = {
+  Coffee: 'Drink',
+  Sandwiches: 'Sandwich',
+  Pastries: 'Pastry'
+};
+
+// Helper to get options config for an item based on its type or category
 function getOptionsConfigForItem(item) {
-  if (!item || !item.type) return {};
-  return optionsConfig[item.type] || {};
+  if (item && item.type && optionsConfig[item.type]) {
+    return optionsConfig[item.type];
+  }
+  if (item && item.category && categoryMap[item.category]) {
+    return optionsConfig[categoryMap[item.category]];
+  }
+  // Fallback: find by name in menuData
+  for (const [category, items] of Object.entries(menuData)) {
+    const found = items.find(i => i.name === item.name);
+    if (found && categoryMap[category]) {
+      return optionsConfig[categoryMap[category]];
+    }
+  }
+  return {};
 }
 
 export default function Cart({
@@ -19,33 +39,26 @@ export default function Cart({
   onApplyPromo,
   onCheckout,
   onContinueShopping,
-  onEdit,
-  onEditRecommended
+  onUpdateCartItem,
+  editingAddOn,
+  showEditAddOnModal,
+  handleEditAddOn,
+  handleEditRecommended,
+  setShowEditAddOnModal,
+  setEditingAddOn
 }) {
-  // Local state for editing cart items and recommended add-ons
+  // Local state for editing cart items only
   const [editingItem, setEditingItem] = useState(null);
-  const [editingAddOn, setEditingAddOn] = useState(null);
 
   // Edit cart item handlers
   const handleEditItem = (item) => {
     setEditingItem(item);
   };
   const handleUpdateItem = (updatedItem) => {
-    if (typeof onEdit === 'function') {
-      onEdit(updatedItem);
+    if (typeof onUpdateCartItem === 'function') {
+      onUpdateCartItem(updatedItem);
     }
     setEditingItem(null);
-  };
-
-  // Edit recommended add-on handlers
-  const handleEditAddOn = (addOn) => {
-    setEditingAddOn(addOn);
-  };
-  const handleUpdateAddOn = (updatedAddOn) => {
-    if (typeof onEditRecommended === 'function') {
-      onEditRecommended(updatedAddOn);
-    }
-    setEditingAddOn(null);
   };
 
   return (
@@ -172,8 +185,10 @@ export default function Cart({
               <div className="mt-4 p-3 rounded-4" style={{ background: '#fff', border: '1px dashed #e5e1dc' }}>
                 <div className="fw-bold mb-2" style={{ color: '#3B2F2F' }}>Recommended for you</div>
                 <div className="d-flex flex-wrap gap-2">
-                  {recommended.map(addOn => (
-                    <div key={addOn.id || addOn.name} className="d-inline-flex align-items-center gap-2 rounded-3 px-2 py-1"
+                  {recommended.map((addOn) => (
+                    <div
+                      key={addOn.uuid}
+                      className="d-inline-flex align-items-center gap-2 rounded-3 px-2 py-1"
                       style={{
                         background: '#fff',
                         border: '1px solid #e5e1dc',
@@ -183,7 +198,7 @@ export default function Cart({
                       <input
                         type="checkbox"
                         checked={!!addOn.selected}
-                        onChange={() => typeof onAddRecommended === 'function' && onAddRecommended(addOn.id || addOn.name)}
+                        onChange={() => typeof onAddRecommended === 'function' && onAddRecommended(addOn.uuid)}
                         style={{ accentColor: '#6B4226', marginRight: 6 }}
                       />
                       <img
@@ -230,11 +245,14 @@ export default function Cart({
                 onUpdateCartItem={handleUpdateItem}
               />
             )}
-            {/* Edit Modal for Add-on */}
-            {editingAddOn && (
+            {/* Edit Modal for Recommended Add-on (controlled by App) */}
+            {showEditAddOnModal && editingAddOn && (
               <ItemDetailsModal
-                show={!!editingAddOn}
-                onClose={() => setEditingAddOn(null)}
+                show={showEditAddOnModal}
+                onClose={() => {
+                  setShowEditAddOnModal(false);
+                  setEditingAddOn(null);
+                }}
                 item={editingAddOn}
                 optionsConfig={getOptionsConfigForItem(editingAddOn)}
                 initialOptions={editingAddOn.options}
@@ -242,7 +260,7 @@ export default function Cart({
                 initialNote={editingAddOn.note}
                 initialQuantity={editingAddOn.quantity || 1}
                 isEditing={true}
-                onUpdateCartItem={handleUpdateAddOn}
+                onUpdateCartItem={handleEditRecommended}
               />
             )}
           </div>

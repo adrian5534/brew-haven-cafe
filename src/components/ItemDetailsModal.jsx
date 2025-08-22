@@ -31,7 +31,7 @@ export default function ItemDetailsModal({
     }
     // Only run when modal opens for a new item
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, item?.id]);
+  }, [show, item?.id, item?.uuid]);
 
   // Subtotal calculation (includes paid options and add-ons)
   let subtotal = typeof item.price === 'number' ? item.price : 0;
@@ -86,6 +86,7 @@ export default function ItemDetailsModal({
   const handleAddToCartClick = () => {
     const cartItem = {
       id: item.id,
+      uuid: item.uuid, // <-- include uuid for recommended add-ons
       name: item.name,
       price: subtotal / quantity, // single item price including options/add-ons
       image: item.image,

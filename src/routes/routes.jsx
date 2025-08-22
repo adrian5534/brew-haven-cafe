@@ -2,7 +2,7 @@ import Home from '../pages/Home';
 import Contact from '../pages/Contact';
 import About from '../pages/About';
 import Menu from '../pages/Menu';
-import CartPage from '../pages/Cart'; // <-- Add this import
+import CartPage from '../pages/Cart'; // <-- Import your Cart page
 import Checkout from '../pages/Checkout';
 import Confirmation from '../pages/Confirmation';
 
@@ -41,7 +41,7 @@ const routes = [
   },
   {
     path: '/cart',
-    element: <CartPage />, // <-- Add this route
+    element: <CartPage />, // <-- This must forward props!
     meta: {
       title: 'Cart',
       description: 'View your cart and checkout',

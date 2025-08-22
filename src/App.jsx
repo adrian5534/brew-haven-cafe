@@ -8,12 +8,15 @@ import CartPreview from './components/CartPreview';
 import ItemDetailsModal from './components/ItemDetailsModal';
 import routes from './routes/routes';
 
-// Import menu and options config
 import menuData from './menu.json';
 import optionsConfigData from './optionsConfig.json';
+import { v4 as uuidv4 } from 'uuid';
 
-// Helper: Find item category and optionsConfig
+// Helper: Find item optionsConfig using type if present, fallback to category/name
 function getOptionsConfigForItem(item) {
+  if (item && item.type && optionsConfigData[item.type]) {
+    return optionsConfigData[item.type];
+  }
   for (const [category, items] of Object.entries(menuData)) {
     const found = items.find(i => i.name === item.name);
     if (found) {
@@ -39,7 +42,23 @@ function getRecommendedAddOns(cartCategories, menuData) {
   notInCart.forEach(cat => {
     pool = pool.concat(menuData[cat]);
   });
-  return shuffle(pool).slice(0, 2).map(item => ({ ...item, selected: false }));
+  // Assign a uuid to each recommended add-on
+  return shuffle(pool).slice(0, 2).map(item => ({
+    ...item,
+    selected: false,
+    uuid: uuidv4()
+  }));
+}
+
+// Helper: Remove duplicates from recommended add-ons (by uuid)
+function dedupeRecommended(recommended) {
+  const seen = new Set();
+  return recommended.filter(addOn => {
+    const key = addOn.uuid;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function App() {
@@ -55,16 +74,19 @@ function App() {
     fee: 0,
     savings: 0,
     total: 0,
-    promo: 'BREWHAVEN20' // prefilled promo code
+    promo: 'BREWHAVEN20'
   });
 
   // Cart drawer state
   const [cartOpen, setCartOpen] = useState(false);
 
-  // Edit modal state
+  // Edit modal state for cart items
   const [editingItem, setEditingItem] = useState(null);
-  const [editingOriginalItem, setEditingOriginalItem] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  // Edit modal state for recommended add-ons
+  const [editingAddOn, setEditingAddOn] = useState(null);
+  const [showEditAddOnModal, setShowEditAddOnModal] = useState(false);
 
   // Recommended add-ons state
   const [recommended, setRecommended] = useState([]);
@@ -74,40 +96,62 @@ function App() {
     () => Array.from(new Set(cartItems.map(item => item.category))),
     [cartItems]
   );
-  // Create a stable string for dependency
   const cartCategoriesString = cartCategories.join(',');
 
   // Only update recommended when cartCategories change
   useEffect(() => {
-    setRecommended(getRecommendedAddOns(cartCategories, menuData));
+    const rawRecommended = getRecommendedAddOns(cartCategories, menuData);
+    setRecommended(dedupeRecommended(rawRecommended));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartCategoriesString]);
 
-  // Edit logic
+  // Edit logic for cart drawer
   const handleEditCartItem = (item) => {
     setEditingItem(item);
-    setEditingOriginalItem(item);
     setShowEditModal(true);
   };
 
+  // Update cart item with new options/addOns/note/quantity
+
   const handleUpdateCartItem = (updatedItem) => {
-    setCartItems(items =>
-      items.map(i =>
-        i.id === editingOriginalItem.id &&
-        JSON.stringify(i.options) === JSON.stringify(editingOriginalItem.options) &&
-        JSON.stringify(i.addOns) === JSON.stringify(editingOriginalItem.addOns) &&
-        (i.note || '') === (editingOriginalItem.note || '')
-          ? updatedItem
-          : i
+     setCartItems(items =>
+     items.map(i =>
+      i.id === updatedItem.id
+        ? { ...i, ...updatedItem }
+        : i
+     )
+   );
+   setShowEditModal(false);
+   setEditingItem(null);
+  };
+
+  // Edit recommended add-on handler (match by uuid)
+  const handleEditRecommended = (updatedAddOn) => {
+    setRecommended(recommended =>
+      recommended.map(addOn =>
+        addOn.uuid === updatedAddOn.uuid
+          ? { ...addOn, ...updatedAddOn }
+          : addOn
       )
     );
-    setShowEditModal(false);
-    setEditingItem(null);
-    setEditingOriginalItem(null);
+    setShowEditAddOnModal(false);
+    setEditingAddOn(null);
+  };
+
+  // Edit logic for recommended add-ons
+  const handleEditAddOn = (addOn) => {
+    setEditingAddOn(addOn);
+    setShowEditAddOnModal(true);
   };
 
   // Cart handlers
   const handleAddToCart = item => {
+    let type = item.type;
+    if (!type) {
+      if (item.category === 'Coffee') type = 'Drink';
+      else if (item.category === 'Sandwiches') type = 'Sandwich';
+      else if (item.category === 'Pastries') type = 'Pastry';
+    }
     setCartItems(prev => {
       const itemKey = JSON.stringify({
         id: item.id,
@@ -135,7 +179,15 @@ function App() {
             : i
         );
       }
-      return [...prev, { ...item, quantity: item.quantity || 1, desc: item.desc || '' }];
+      return [
+        ...prev,
+        {
+          ...item,
+          quantity: item.quantity || 1,
+          desc: item.desc || '',
+          type
+        }
+      ];
     });
   };
 
@@ -165,11 +217,11 @@ function App() {
 
   const handleClearCart = () => setCartItems([]);
 
-  // Toggle recommended add-on selection
-  const handleAddRecommended = (addOnIdOrName) => {
+  // Toggle recommended add-on selection (match by uuid)
+  const handleAddRecommended = (addOnUuid) => {
     setRecommended(recommended =>
       recommended.map(addOn =>
-        (addOn.id === addOnIdOrName || addOn.name === addOnIdOrName)
+        addOn.uuid === addOnUuid
           ? { ...addOn, selected: !addOn.selected }
           : addOn
       )
@@ -186,10 +238,8 @@ function App() {
     navigate('/');
   };
 
-  // Cart count for Navbar
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
-  // Props to pass to pages
   const sharedProps = {
     cartItems,
     recommended,
@@ -202,13 +252,18 @@ function App() {
     handleApplyPromo,
     handleCheckout,
     handleContinueShopping,
-    handleEditCartItem, // Pass edit handler
+    handleEditCartItem,
+    handleUpdateCartItem,
+    handleEditRecommended,
+    handleEditAddOn,
+    editingAddOn,
+    showEditAddOnModal,
+    setShowEditAddOnModal,
+    setEditingAddOn,
   };
 
-  // Update order summary when cart changes or promo changes or recommended add-ons change
   useEffect(() => {
     const itemsCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
-    // Include selected recommended add-ons in total
     const selectedAddOnsTotal = recommended
       .filter(addOn => addOn.selected)
       .reduce((sum, addOn) => sum + (addOn.price || 0), 0);
@@ -236,7 +291,6 @@ function App() {
   return (
     <>
       <Navbar cartCount={cartCount} onCartClick={() => setCartOpen(true)} />
-      {/* Cart Drawer */}
       {cartOpen && (
         <div
           className="cart-drawer-overlay"
@@ -285,7 +339,7 @@ function App() {
           </div>
         </div>
       )}
-      {/* Edit Modal */}
+      {/* Edit Modal for Cart Item */}
       {showEditModal && editingItem && (
         <ItemDetailsModal
           show={showEditModal}
@@ -299,6 +353,21 @@ function App() {
           initialQuantity={editingItem.quantity}
           isEditing={true}
           onUpdateCartItem={handleUpdateCartItem}
+        />
+      )}
+      {/* Edit Modal for Recommended Add-on */}
+      {showEditAddOnModal && editingAddOn && (
+        <ItemDetailsModal
+          show={showEditAddOnModal}
+          onClose={() => setShowEditAddOnModal(false)}
+          item={editingAddOn}
+          optionsConfig={getOptionsConfigForItem(editingAddOn)}
+          initialOptions={editingAddOn.options}
+          initialAddOns={editingAddOn.addOns}
+          initialNote={editingAddOn.note}
+          initialQuantity={editingAddOn.quantity || 1}
+          isEditing={true}
+          onUpdateCartItem={handleEditRecommended}
         />
       )}
       <Routes>

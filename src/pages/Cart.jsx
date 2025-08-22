@@ -2,7 +2,8 @@ import React from 'react';
 import Cart from '../components/Cart';
 
 export default function CartPage(props) {
-  // Map App.jsx props to Cart's expected prop names
+  // No local state or handlers; use props from App for all updates
+
   return (
     <Cart
       cartItems={props.cartItems}
@@ -15,6 +16,13 @@ export default function CartPage(props) {
       onApplyPromo={props.handleApplyPromo}
       onCheckout={props.handleCheckout}
       onContinueShopping={props.handleContinueShopping}
+      onUpdateCartItem={props.handleUpdateCartItem}
+      editingAddOn={props.editingAddOn}
+      showEditAddOnModal={props.showEditAddOnModal}
+      handleEditAddOn={props.handleEditAddOn}
+      handleEditRecommended={props.handleEditRecommended}
+      setShowEditAddOnModal={props.setShowEditAddOnModal}
+      setEditingAddOn={props.setEditingAddOn}
     />
   );
 }
