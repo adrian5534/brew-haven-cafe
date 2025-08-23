@@ -86,7 +86,7 @@ export default function ItemDetailsModal({
   const handleAddToCartClick = () => {
     const cartItem = {
       id: item.id,
-      uuid: item.uuid, // <-- include uuid for recommended add-ons
+      uuid: item.uuid, // <-- include uuid for recommended add-ons and cart items
       name: item.name,
       price: subtotal / quantity, // single item price including options/add-ons
       image: item.image,
@@ -98,7 +98,7 @@ export default function ItemDetailsModal({
     };
     if (isEditing && onUpdateCartItem) {
       onUpdateCartItem(cartItem);
-    } else {
+    } else if (onAddToCart) {
       onAddToCart(cartItem);
     }
     onClose();

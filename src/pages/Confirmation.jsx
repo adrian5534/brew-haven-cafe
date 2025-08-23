@@ -1,27 +1,59 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-export default function Confirmation({
-  orderDetails = {
-    id: 'BHC-24715',
-    pickup: 'Today, 15 30 mins at counter',
-    contact: 'alex@example.com',
+export default function Confirmation({ setCartItems }) {
+  const location = useLocation();
+
+  // Get order details from navigation state
+  const state = location.state || {};
+
+  // Generate a random order number using uuid
+  const orderId = useMemo(() => `BHC-${uuidv4().slice(0, 8).toUpperCase()}`, []);
+
+  // Clear cart from localStorage and optionally from global state on mount
+  useEffect(() => {
+    localStorage.removeItem('cartItems');
+    if (typeof setCartItems === 'function') {
+      setCartItems([]);
+    }
+  }, [setCartItems]);
+
+  // Prepare order details from state or fallback
+  const orderDetails = {
+    id: orderId,
+    pickup: state.pickupType === 'delivery'
+      ? `Delivery: ${state.address || 'N/A'} (${state.pickupTime || 'N/A'})`
+      : `${state.pickupTime || 'N/A'} at counter`,
+    contact: state.email || 'N/A',
     items: [
-      { id: 1, name: 'Classic Cappuccino', quantity: 1, price: 4.5, image: '/images/cappuccino.jpg' },
-      { id: 2, name: 'Butter Croissant', quantity: 2, price: 3.5, image: '/images/croissant.jpg' },
-      { id: 3, name: 'Turkey Avocado', quantity: 1, price: 8.5, image: '/images/turkey-avocado.jpg' },
+      ...(state.cartItems || []),
+      ...(state.selectedAddOns || []),
     ],
-    subtotal: 20.0,
-    tax: 1.6,
-    total: 21.6,
-  }
-}) {
+    subtotal: (state.cartItems || []).reduce((sum, item) => sum + item.price * item.quantity, 0)
+      + (state.selectedAddOns || []).reduce((sum, addOn) => sum + (addOn.price || 0), 0),
+    tax: state.total ? +(state.total - ((state.cartItems || []).reduce((sum, item) => sum + item.price * item.quantity, 0)
+      + (state.selectedAddOns || []).reduce((sum, addOn) => sum + (addOn.price || 0), 0))).toFixed(2) : 0,
+    total: state.total || 0,
+    firstName: state.firstName,
+    lastName: state.lastName,
+    phone: state.phone,
+  };
+
   return (
-    <div style={{ background: '#F5E6CC', minHeight: '100vh', padding: '2rem 0' }}>
-      <div className="container">
-        <nav className="mb-3" style={{ fontSize: '0.98em', color: '#7a6a58' }}>
+    <div style={{
+      background: '#F5E6CC',
+      minHeight: '100vh',
+      padding: '2rem 0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+        <nav className="mb-3" style={{ fontSize: '0.98em', color: '#7a6a58', textAlign: 'center' }}>
           <span>Cart</span> <span className="mx-1">/</span> <span>Checkout</span> <span className="mx-1">/</span> <span style={{ color: '#3B2F2F', fontWeight: 600 }}>Confirmation</span>
         </nav>
-        <div className="d-flex align-items-center mb-2">
+        <div className="d-flex align-items-center mb-2 justify-content-center">
           <div style={{
             background: '#4E6E58',
             borderRadius: '12px',
@@ -39,7 +71,7 @@ export default function Confirmation({
             <p className="mb-0" style={{ color: '#7a6a58' }}>Thanks for your order! We&#39;re getting it ready.</p>
           </div>
         </div>
-        <div className="rounded-4 p-4 mb-4" style={{ background: '#f7ecd6', border: '1px solid #e5e1dc', maxWidth: 600 }}>
+        <div className="rounded-4 p-4 mb-4 mx-auto" style={{ background: '#f7ecd6', border: '1px solid #e5e1dc', maxWidth: 600 }}>
           <div className="d-flex justify-content-between mb-2" style={{ fontSize: '1.05em', color: '#3B2F2F' }}>
             <span>Order #</span>
             <span style={{ fontWeight: 600 }}>#{orderDetails.id}</span>
@@ -52,16 +84,24 @@ export default function Confirmation({
             <span>Contact</span>
             <span>{orderDetails.contact}</span>
           </div>
+          <div className="d-flex justify-content-between mb-3" style={{ fontSize: '1.05em', color: '#3B2F2F' }}>
+            <span>Name</span>
+            <span>{orderDetails.firstName} {orderDetails.lastName}</span>
+          </div>
+          <div className="d-flex justify-content-between mb-3" style={{ fontSize: '1.05em', color: '#3B2F2F' }}>
+            <span>Phone</span>
+            <span>{orderDetails.phone}</span>
+          </div>
           <hr />
           {orderDetails.items.map(item => (
-            <div key={item.id} className="d-flex align-items-center mb-2 p-2 rounded-3" style={{ background: '#fff' }}>
+            <div key={item.uuid || item.id || item.name} className="d-flex align-items-center mb-2 p-2 rounded-3" style={{ background: '#fff' }}>
               <img src={item.image} alt={item.name} style={{ width: 48, height: 48, borderRadius: 8, marginRight: 16, objectFit: 'cover' }} />
               <div className="flex-grow-1">
                 <div className="fw-bold" style={{ color: '#3B2F2F' }}>{item.name}</div>
-                <div className="text-muted" style={{ fontSize: '0.97em' }}>Qty {item.quantity}</div>
+                <div className="text-muted" style={{ fontSize: '0.97em' }}>Qty {item.quantity || 1}</div>
               </div>
               <div className="fw-bold" style={{ color: '#3B2F2F', minWidth: 60, textAlign: 'right' }}>
-                ${(item.price * item.quantity).toFixed(2)}
+                ${(item.price * (item.quantity || 1)).toFixed(2)}
               </div>
             </div>
           ))}
@@ -79,13 +119,13 @@ export default function Confirmation({
             <span>${orderDetails.total.toFixed(2)}</span>
           </div>
         </div>
-        <div className="rounded-4 p-3 mb-4" style={{ background: '#f7ecd6', border: '1px solid #e5e1dc', maxWidth: 600 }}>
+        <div className="rounded-4 p-3 mb-4 mx-auto" style={{ background: '#f7ecd6', border: '1px solid #e5e1dc', maxWidth: 600 }}>
           <div className="d-flex align-items-center mb-2" style={{ color: '#7a6a58', fontSize: '1em' }}>
             <i className="bi bi-info-circle me-2"></i>
             Show this order number at pickup. We&#39;ll email you when it&#39;s ready. For delivery, a courier will contact you at the provided phone number.
           </div>
         </div>
-        <div className="d-flex gap-3" style={{ maxWidth: 600 }}>
+        <div className="d-flex gap-3 mx-auto" style={{ maxWidth: 600 }}>
           <button className="btn flex-grow-1" style={{
             background: '#4E6E58',
             color: '#fff',

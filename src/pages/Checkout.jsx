@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Checkout({
   cartItems = [],
   recommended = [],
   orderSummary = { subtotal: 0, taxes: 0, total: 0 },
 }) {
+  const navigate = useNavigate();
+
   // Form state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -13,6 +16,7 @@ export default function Checkout({
   const [phone, setPhone] = useState('');
   const [pickupTime, setPickupTime] = useState('Today, 15–20 mins');
   const [address, setAddress] = useState('');
+  const [errors, setErrors] = useState({});
 
   // Calculate summary if not provided
   const subtotal = orderSummary.subtotal || cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -20,6 +24,27 @@ export default function Checkout({
   const addOnsTotal = selectedAddOns.reduce((sum, addOn) => sum + (addOn.price || 0), 0);
   const taxes = orderSummary.taxes || +((subtotal + addOnsTotal) * 0.08).toFixed(2);
   const total = orderSummary.total || +(subtotal + addOnsTotal + taxes).toFixed(2);
+
+  // Validation
+  function validate() {
+    const newErrors = {};
+    if (!firstName.trim()) newErrors.firstName = 'First name required';
+    if (!lastName.trim()) newErrors.lastName = 'Last name required';
+    if (!email.trim()) newErrors.email = 'Email required';
+    if (!phone.trim()) newErrors.phone = 'Phone required';
+    if (pickupType === 'delivery' && !address.trim()) newErrors.address = 'Address required';
+    return newErrors;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      // Simulate order placement, then navigate
+      navigate('/confirmation', { state: { firstName, lastName, email, pickupType, phone, pickupTime, address, cartItems, selectedAddOns, total } });
+    }
+  }
 
   return (
     <div style={{ background: '#F5E6CC', minHeight: '100vh', padding: '2rem 0' }}>
@@ -39,7 +64,7 @@ export default function Checkout({
               ) : (
                 <>
                   {cartItems.map(item => (
-                    <div key={item.id} className="d-flex align-items-center mb-3 p-2 rounded-3" style={{ background: '#f8f7f4', border: '1px solid #e5e1dc' }}>
+                    <div key={item.uuid || item.id} className="d-flex align-items-center mb-3 p-2 rounded-3" style={{ background: '#f8f7f4', border: '1px solid #e5e1dc' }}>
                       <img
                         src={item.image}
                         alt={item.name}
@@ -68,7 +93,7 @@ export default function Checkout({
                     <>
                       <div className="fw-bold mt-3 mb-2" style={{ color: '#3B2F2F', fontSize: '1em' }}>Selected Add-ons</div>
                       {selectedAddOns.map(addOn => (
-                        <div key={addOn.id || addOn.name} className="d-flex align-items-center mb-2 p-2 rounded-3" style={{ background: '#f8f7f4', border: '1px solid #e5e1dc' }}>
+                        <div key={addOn.uuid} className="d-flex align-items-center mb-2 p-2 rounded-3" style={{ background: '#f8f7f4', border: '1px solid #e5e1dc' }}>
                           <img
                             src={addOn.image}
                             alt={addOn.name}
@@ -108,38 +133,41 @@ export default function Checkout({
           <div className="col-lg-6">
             <div className="rounded-4 p-4 mb-4" style={{ background: '#fff', border: '1px solid #e5e1dc' }}>
               <div className="fw-bold mb-3" style={{ color: '#3B2F2F', fontSize: '1.1rem' }}>Customer Information</div>
-              <form>
+              <form onSubmit={handleSubmit} noValidate>
                 <div className="row mb-3">
                   <div className="col">
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control${errors.firstName ? ' is-invalid' : ''}`}
                       placeholder="Enter first name"
                       value={firstName}
                       onChange={e => setFirstName(e.target.value)}
                       style={{ background: '#f5e6cc', borderRadius: 8, border: 'none' }}
                     />
+                    {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
                   </div>
                   <div className="col">
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control${errors.lastName ? ' is-invalid' : ''}`}
                       placeholder="Enter last name"
                       value={lastName}
                       onChange={e => setLastName(e.target.value)}
                       style={{ background: '#f5e6cc', borderRadius: 8, border: 'none' }}
                     />
+                    {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
                   </div>
                 </div>
                 <div className="mb-3">
                   <input
                     type="email"
-                    className="form-control"
+                    className={`form-control${errors.email ? ' is-invalid' : ''}`}
                     placeholder="name@email.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     style={{ background: '#f5e6cc', borderRadius: 8, border: 'none' }}
                   />
+                  {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
                 <div className="mb-3 d-flex">
                   <button
@@ -174,12 +202,13 @@ export default function Checkout({
                 <div className="mb-3">
                   <input
                     type="tel"
-                    className="form-control"
+                    className={`form-control${errors.phone ? ' is-invalid' : ''}`}
                     placeholder="(555) 123-4567"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     style={{ background: '#f5e6cc', borderRadius: 8, border: 'none' }}
                   />
+                  {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                 </div>
                 <div className="mb-3">
                   <input
@@ -195,12 +224,13 @@ export default function Checkout({
                   <div className="mb-3">
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control${errors.address ? ' is-invalid' : ''}`}
                       placeholder="Street, City, ZIP"
                       value={address}
                       onChange={e => setAddress(e.target.value)}
                       style={{ background: '#f5e6cc', borderRadius: 8, border: 'none' }}
                     />
+                    {errors.address && <div className="invalid-feedback">{errors.address}</div>}
                   </div>
                 )}
                 <div className="mt-2 text-muted" style={{ fontSize: '0.95em' }}>

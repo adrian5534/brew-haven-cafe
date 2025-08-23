@@ -82,7 +82,7 @@ export default function Cart({
             {/* Cart Items */}
             {cartItems.map(item => (
               <div
-                key={`${item.id}-${JSON.stringify(item.options)}-${JSON.stringify(item.addOns)}-${item.note || ''}`}
+                key={item.uuid || item.id}
                 className="d-flex align-items-center mb-3 p-3 rounded-3"
                 style={{ background: '#fff', border: '1px solid #e5e1dc' }}
               >
@@ -105,26 +105,40 @@ export default function Cart({
                       {/* Options/Tags */}
                       <div className="mb-1">
                         {Array.isArray(item.options)
-                          ? item.options.map((opt, idx) => (
-                              <span key={idx} className="badge rounded-pill me-2" style={{
-                                background: '#f5e6cc',
-                                color: '#3B2F2F',
-                                fontWeight: 500,
-                                fontSize: '0.95em',
-                                border: '1px solid #e5e1dc'
-                              }}>
-                                {typeof opt === 'string' ? opt : JSON.stringify(opt)}
-                              </span>
-                            ))
-                          : item.options && typeof item.options === 'object'
-                            ? Object.entries(item.options).map(([key, value], idx) => (
-                                <span key={idx} className="badge rounded-pill me-2" style={{
+                          ? item.options.map((opt) => (
+                              <span
+                                key={
+                                  typeof opt === 'string'
+                                    ? opt
+                                    : opt?.uuid
+                                      ? opt.uuid
+                                      : JSON.stringify(opt)
+                                }
+                                className="badge rounded-pill me-2"
+                                style={{
                                   background: '#f5e6cc',
                                   color: '#3B2F2F',
                                   fontWeight: 500,
                                   fontSize: '0.95em',
                                   border: '1px solid #e5e1dc'
-                                }}>
+                                }}
+                              >
+                                {typeof opt === 'string' ? opt : JSON.stringify(opt)}
+                              </span>
+                            ))
+                          : item.options && typeof item.options === 'object'
+                            ? Object.entries(item.options).map(([key, value]) => (
+                                <span
+                                  key={key + ':' + value}
+                                  className="badge rounded-pill me-2"
+                                  style={{
+                                    background: '#f5e6cc',
+                                    color: '#3B2F2F',
+                                    fontWeight: 500,
+                                    fontSize: '0.95em',
+                                    border: '1px solid #e5e1dc'
+                                  }}
+                                >
                                   {key}: {value}
                                 </span>
                               ))
@@ -145,7 +159,7 @@ export default function Cart({
                     <button
                       className="btn btn-light"
                       style={{ borderRadius: 10, width: 32, height: 32, fontWeight: 600, fontSize: '1.1em', border: '1px solid #e5e1dc' }}
-                      onClick={() => typeof onQuantityChange === 'function' && onQuantityChange(item.id, item.quantity - 1, item.options, item.addOns, item.note)}
+                      onClick={() => typeof onQuantityChange === 'function' && onQuantityChange(item.uuid, item.quantity - 1, item.options, item.addOns, item.note)}
                       disabled={item.quantity <= 1}
                     >-</button>
                     <span className="fw-bold" style={{
@@ -159,12 +173,12 @@ export default function Cart({
                     <button
                       className="btn btn-light"
                       style={{ borderRadius: 10, width: 32, height: 32, fontWeight: 600, fontSize: '1.1em', border: '1px solid #e5e1dc' }}
-                      onClick={() => typeof onQuantityChange === 'function' && onQuantityChange(item.id, item.quantity + 1, item.options, item.addOns, item.note)}
+                      onClick={() => typeof onQuantityChange === 'function' && onQuantityChange(item.uuid, item.quantity + 1, item.options, item.addOns, item.note)}
                     >+</button>
                     <button
                       className="btn btn-light ms-2"
                       style={{ borderRadius: 10, width: 32, height: 32, border: '1px solid #e5e1dc', color: '#6B4226' }}
-                      onClick={() => typeof onRemove === 'function' && onRemove(item.id, item.options, item.addOns, item.note)}
+                      onClick={() => typeof onRemove === 'function' && onRemove(item.uuid, item.options, item.addOns, item.note)}
                     >
                       <span aria-label="Remove" title="Remove">&#128465;</span>
                     </button>
@@ -187,7 +201,7 @@ export default function Cart({
                 <div className="d-flex flex-wrap gap-2">
                   {recommended.map((addOn) => (
                     <div
-                      key={addOn.uuid}
+                      key={addOn.uuid || addOn.id}
                       className="d-inline-flex align-items-center gap-2 rounded-3 px-2 py-1"
                       style={{
                         background: '#fff',

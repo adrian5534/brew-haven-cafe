@@ -1,24 +1,28 @@
 {
   "Coffee": [
     {
+      "uuid": "coffee-1",
       "name": "Classic Cappuccino",
       "desc": "Double espresso topped with silky steamed milk and velvety foam.",
       "price": 4.50,
       "image": "/image/cappuccino.jpg"
     },
     {
+      "uuid": "coffee-2",
       "name": "Iced Vanilla Latte",
       "desc": "Smooth espresso, vanilla, and cold milk poured over ice.",
       "price": 5.25,
       "image": "/image/vanilla-latte.jpg"
     },
     {
+      "uuid": "coffee-3",
       "name": "Matcha Latte",
       "desc": "Stone-ground matcha whisked with milk for a creamy finish.",
       "price": 5.00,
       "image": "/image/matcha.jpg"
     },
     {
+      "uuid": "coffee-4",
       "name": "Mocha Delight",
       "desc": "Espresso balanced with rich cocoa and steamed milk.",
       "price": 5.25,
@@ -27,24 +31,28 @@
   ],
   "Pastries": [
     {
+      "uuid": "pastry-1",
       "name": "Butter Croissant",
       "desc": "Flaky, buttery layers baked fresh each morning.",
       "price": 3.50,
       "image": "/image/croissant.jpg"
     },
     {
+      "uuid": "pastry-2",
       "name": "Blueberry Muffin",
       "desc": "Studded with blueberries and a hint of lemon zest.",
       "price": 3.75,
       "image": "/image/muffin.jpg"
     },
     {
+      "uuid": "pastry-3",
       "name": "Chocolate Chip Cookie",
       "desc": "Chewy center, crisp edges, and melty dark chocolate chips.",
       "price": 2.50,
       "image": "/image/cookie.jpg"
     },
     {
+      "uuid": "pastry-4",
       "name": "Banana Bread",
       "desc": "House recipe with toasted walnuts and a hint of cinnamon.",
       "price": 3.25,
@@ -53,24 +61,28 @@
   ],
   "Sandwiches": [
     {
+      "uuid": "sandwich-1",
       "name": "Turkey Avocado",
       "desc": "Roasted turkey, avocado, mixed greens, and aioli on sourdough.",
       "price": 8.50,
       "image": "/image/turkey.jpg"
     },
     {
+      "uuid": "sandwich-2",
       "name": "Caprese",
       "desc": "Tomato, fresh mozzarella, basil pesto, and balsamic glaze.",
       "price": 7.95,
       "image": "/image/caprese.jpg"
     },
     {
+      "uuid": "sandwich-3",
       "name": "Grilled Cheese",
       "desc": "Melted cheddar and gouda on butter-toasted country bread.",
       "price": 6.95,
       "image": "/image/grilled-cheese.jpg"
     },
     {
+      "uuid": "sandwich-4",
       "name": "Chicken Pesto Panini",
       "desc": "Herbed chicken, pesto, provolone, and roasted peppers.",
       "price": 8.95,

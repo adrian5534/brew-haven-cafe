@@ -35,15 +35,7 @@ export default function CartPreview({
             const price = typeof item.price === 'number' ? item.price : 0;
             return (
               <div
-                key={
-                  item.id +
-                  '-' +
-                  JSON.stringify(item.options) +
-                  '-' +
-                  JSON.stringify(item.addOns) +
-                  '-' +
-                  (item.note || '')
-                }
+                key={item.uuid}
                 className="d-flex align-items-center mb-3 p-2 rounded-3"
                 style={{
                   background: '#fff',
@@ -109,7 +101,7 @@ export default function CartPreview({
                         color: '#3B2F2F',
                         border: '1px solid #e5e1dc'
                       }}
-                      onClick={() => onQuantityChange(item.id, (item.quantity || 1) - 1, item.options, item.addOns, item.note)}
+                      onClick={() => onQuantityChange(item.uuid, (item.quantity || 1) - 1, item.options, item.addOns, item.note)}
                       disabled={item.quantity <= 1}
                     >-</button>
                     <span className="mx-2" style={{ color: '#3B2F2F', fontWeight: 600 }}>{item.quantity || 1}</span>
@@ -124,7 +116,7 @@ export default function CartPreview({
                         color: '#3B2F2F',
                         border: '1px solid #e5e1dc'
                       }}
-                      onClick={() => onQuantityChange(item.id, (item.quantity || 1) + 1, item.options, item.addOns, item.note)}
+                      onClick={() => onQuantityChange(item.uuid, (item.quantity || 1) + 1, item.options, item.addOns, item.note)}
                     >+</button>
                     {/* Edit button */}
                     {onEdit && (
@@ -150,7 +142,7 @@ export default function CartPreview({
                     color: '#d9534f',
                     background: '#fff'
                   }}
-                  onClick={() => onRemove(item.id, item.options, item.addOns, item.note)}
+                  onClick={() => onRemove(item.uuid, item.options, item.addOns, item.note)}
                   title="Remove"
                 >✕</button>
               </div>

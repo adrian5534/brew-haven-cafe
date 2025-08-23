@@ -64,8 +64,11 @@ function dedupeRecommended(recommended) {
 function App() {
   const navigate = useNavigate();
 
-  // Global cart state
-  const [cartItems, setCartItems] = useState([]);
+  // Global cart state (persisted in localStorage)
+  const [cartItems, setCartItems] = useState(() => {
+    const saved = localStorage.getItem('cartItems');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [orderSummary, setOrderSummary] = useState({
     itemsCount: 0,
     itemsTotal: 0,
@@ -76,6 +79,11 @@ function App() {
     total: 0,
     promo: 'BREWHAVEN20'
   });
+
+  // Persist cartItems to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Cart drawer state
   const [cartOpen, setCartOpen] = useState(false);
@@ -112,17 +120,16 @@ function App() {
   };
 
   // Update cart item with new options/addOns/note/quantity
-
   const handleUpdateCartItem = (updatedItem) => {
-     setCartItems(items =>
-     items.map(i =>
-      i.id === updatedItem.id
-        ? { ...i, ...updatedItem }
-        : i
-     )
-   );
-   setShowEditModal(false);
-   setEditingItem(null);
+    setCartItems(items =>
+      items.map(i =>
+        i.uuid === updatedItem.uuid
+          ? { ...i, ...updatedItem }
+          : i
+      )
+    );
+    setShowEditModal(false);
+    setEditingItem(null);
   };
 
   // Edit recommended add-on handler (match by uuid)
@@ -185,16 +192,17 @@ function App() {
           ...item,
           quantity: item.quantity || 1,
           desc: item.desc || '',
-          type
+          type,
+          uuid: uuidv4() // <-- assign uuid to each cart item
         }
       ];
     });
   };
 
-  const handleQuantityChange = (id, qty, options, addOns, note) => {
+  const handleQuantityChange = (uuid, qty, options, addOns, note) => {
     setCartItems(items =>
       items.map(item =>
-        item.id === id &&
+        item.uuid === uuid &&
         JSON.stringify(item.options) === JSON.stringify(options) &&
         JSON.stringify(item.addOns) === JSON.stringify(addOns) &&
         item.note === note
@@ -204,10 +212,10 @@ function App() {
     );
   };
 
-  const handleRemove = (id, options, addOns, note) => {
+  const handleRemove = (uuid, options, addOns, note) => {
     setCartItems(items =>
       items.filter(item =>
-        !(item.id === id &&
+        !(item.uuid === uuid &&
           JSON.stringify(item.options) === JSON.stringify(options) &&
           JSON.stringify(item.addOns) === JSON.stringify(addOns) &&
           item.note === note)
@@ -231,9 +239,12 @@ function App() {
   const handleApplyPromo = code => {
     setOrderSummary(summary => ({ ...summary, promo: code }));
   };
+
+  // Do NOT clear cart here! Only navigate to checkout.
   const handleCheckout = () => {
     navigate('/checkout');
   };
+
   const handleContinueShopping = () => {
     navigate('/');
   };
@@ -260,6 +271,7 @@ function App() {
     showEditAddOnModal,
     setShowEditAddOnModal,
     setEditingAddOn,
+    setCartItems, // Pass setCartItems for confirmation page
   };
 
   useEffect(() => {
