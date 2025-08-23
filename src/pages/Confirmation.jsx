@@ -59,32 +59,26 @@ export default function Confirmation({ setCartItems }) {
     pdf.save(`receipt-${orderDetails.id}.pdf`);
   }
 
-  // Share receipt using Web Share API if available
+  // Share to social media (Twitter/X, Facebook)
   function handleShareReceipt() {
-    const text = [
-      `Order #: ${orderDetails.id}`,
-      `Pickup: ${orderDetails.pickup}`,
-      `Contact: ${orderDetails.contact}`,
-      `Name: ${orderDetails.firstName} ${orderDetails.lastName}`,
-      `Phone: ${orderDetails.phone}`,
-      '',
-      'Items:',
-      ...orderDetails.items.map(item =>
-        `- ${item.name} x${item.quantity || 1} ($${(item.price * (item.quantity || 1)).toFixed(2)})`
-      ),
-      '',
-      `Subtotal: $${orderDetails.subtotal.toFixed(2)}`,
-      `Tax: $${orderDetails.tax.toFixed(2)}`,
-      `Total: $${orderDetails.total.toFixed(2)}`
-    ].join('\n');
-    if (navigator.share) {
-      navigator.share({
-        title: `Receipt ${orderDetails.id}`,
-        text,
-      });
-    } else {
-      window.alert('Sharing is not supported on this device.');
+    const shareText = encodeURIComponent(
+      `I just placed an order at Brew Haven Cafe!\nOrder #: ${orderDetails.id}\nTotal: $${orderDetails.total.toFixed(2)}\n#BrewHavenCafe`
+    );
+    const url = window.location.origin;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${url}`;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${shareText}`;
+
+    // Show simple prompt for user to choose platform
+    const choice = window.prompt(
+      "Share your order!\nType 'twitter' for Twitter/X, 'facebook' for Facebook, or 'cancel' to abort.",
+      "twitter"
+    );
+    if (choice === "twitter") {
+      window.open(twitterUrl, "_blank");
+    } else if (choice === "facebook") {
+      window.open(facebookUrl, "_blank");
     }
+    // else do nothing
   }
 
   return (
