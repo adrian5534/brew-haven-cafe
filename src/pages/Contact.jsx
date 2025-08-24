@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/global.css';
-import '../styles/Contact.css';
+import '../styles/contact.css';
 
 export default function Contact() {
   return (
